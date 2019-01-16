@@ -14,94 +14,109 @@ delle configurazione recuperate oltre a nomemacchina e timestamp.
 @author Vicentini Elia
 @version 0.1
 """
-import sys, wmi
+import sys, wmi, socket, datetime, time
 
 def main():
     argv = sys.argv
+    f = open('getnetinfo.csv', 'w+')
 
     if len(argv) < 2 or len(argv) > 3:  #Controllo degli argomenti
         print('Errore')
     else:
         if argv[1] == '-n':             # Se l'argomento è -n
-            enabledNetworkAdapter()     # Avvia la funzione "Schede abilitate"
+            enabledNetworkAdapter(f)     # Avvia la funzione 'Schede abilitate'
         elif argv[1] == '-y':           # Se l'arogmento è -y
-            allNetworkAdapter()         # Avvia la funzione "Tutte le schede"
+            allNetworkAdapter(f)         # Avvia la funzione 'Tutte le schede'
         else:                           # Se l'argomento è sbagliato
-            print('Errore')              # Stampa "Errore"
+            print('Errore, argomento non valido')    # Stampa 'Errore'
 
-def enabledNetworkAdapter():
+def enabledNetworkAdapter(f):
     """
     Questa funzione stampa a video tutte le informazioni delle
     schede abilitate
     """
-    strComputer = "."
+    strComputer = '.'
     objWMIService = wmi.WMI()
-    colItems = "SELECT * FROM Win32_NetworkAdapterConfiguration"
+    colItems = 'SELECT * FROM Win32_NetworkAdapterConfiguration'
 
+    hostname = socket.gethostname()
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    f.write('Nome macchina: ' + hostname + '  ' + st)
+    
     for i in objWMIService.query(colItems):
         #Controllo se la scheda di rete è attiva
         if i.IPEnabled == True:
             #Nome scheda di rete
-            print("\n" + str(i.Index) + ") " + i.Description)
+            f.write('\n' + str(i.Index) + ') ' + i.Description)
 
             #DHCP
-            if i.DHCPEnabled != None:
-                print(" DHCP ENABLED: " + str(i.DHCPEnabled))
             if i.DHCPEnabled == True:
-                print(" DCHP Domain: " + str(i.DHCPServer[0]))
+                if i.DHCPServer != None:
+                    f.write('\n DCHP Domain: ' + i.DHCPServer)
 
             #DNS Domain
             if i.DNSHostName != None:
-                print(" DNS Hostname: " + i.DNSHostName)
+                f.write('\n DNS Hostname: ' + i.DNSHostName)
 
             #IP
-            print(" IP: " + i.IPAddress[0])
+            f.write('\n IP: ' + i.IPAddress[0])
             if i.IPXAddress != None:
-                print(" IPX Address: " + i.IPXAddress)
+                f.write('\n IPX Address: ' + i.IPXAddress)
             if i.IPSubnet != None:
-                print(" IP Subnet: " + i.IPSubnet[0])
+                f.write('\n Subnet Mask: ' + i.IPSubnet[0])
             
 
             #Mac Address
             if i.MACAddress != None:
-                print(" MAC Address: " + i.MACAddress)
+                print('\n MAC Address: ' + i.MACAddress)
+
+            f.write('\n')
             
             
-def allNetworkAdapter():
+def allNetworkAdapter(f):
     """
     Questa funzione stampa a video tutte le informazioni di tutte
     le schede presenti
     """
-    strComputer = "."
+    strComputer = '.'
     objWMIService = wmi.WMI()
-    colItems = "SELECT * FROM Win32_NetworkAdapterConfiguration"
+    colItems = 'SELECT * FROM Win32_NetworkAdapterConfiguration'
 
+    hostname = socket.gethostname()
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    f.write('Nome macchina: ' + hostname + '  ' + st + '\n')
+    
     for i in objWMIService.query(colItems):
         #Nome scheda di rete
-        print("\n" + str(i.Index) + ") " + i.Description)
+        f.write('\n' + str(i.Index) + ') ' + i.Description)
 
         #DHCP
-        print(" DHCP ENABLED: " + str(i.DHCPEnabled))
         if i.DHCPEnabled == True:
             if i.DHCPServer != None:
-                print(" DCHP Domain: " + i.DHCPServer[0])
+                f.write('\n DCHP Domain: ' + i.DHCPServer)
 
         #DNS Domain
         if i.DNSHostName != None:
-            print(" DNS Hostname: " + i.DNSHostName)
+            f.write('\n DNS Hostname: ' + i.DNSHostName)
 
         #IP
         if i.IPAddress != None:
-            print(" IP: " + i.IPAddress[0])
+            f.write('\n IP: ' + i.IPAddress[0])
         if i.IPXAddress != None:
-            print(" IPX Address: " + i.IPXAddress)
+            f.write('\n IPX Address: ' + i.IPXAddress)
         if i.IPSubnet != None:
-            print(" IP Subnet: " + i.IPSubnet[0])
+            f.write('\n Subnet Mask: ' + i.IPSubnet[0])
 
         #Mac Address
         if i.MACAddress != None:
-            print(" MAC Address: " + i.MACAddress)
+            f.write('\n MAC Address: ' + i.MACAddress)
+
+        f.write('\n')
             
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
+    print("Stop")
+
