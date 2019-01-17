@@ -1,14 +1,13 @@
-# -*- coding: cp1252 -*-
 """
 Si vuole monitorare la configurazione
 (attributi che si ritengono significativi) delle schede di rete
 installate sul computer locale e remoti accedendo alla classe
-CIM, NetAdapterConfiguration. Il programma python getnetinfo.py avr‡
+CIM, NetAdapterConfiguration. Il programma python getnetinfo.py avr√†
 il parametro enalbe in ingresso con cui decidere se monitorare le
 informaznio delle schede abilitate (parametro -y) o se trattare le
 informazioni di tutte le schede presenti (-n).
 
-L'output del programma Ë un file di testo csv con le informazioni
+L'output del programma √® un file di testo csv con le informazioni
 delle configurazione recuperate oltre a nomemacchina e timestamp.
 
 @author Vicentini Elia
@@ -23,11 +22,11 @@ def main():
     if len(argv) < 2 or len(argv) > 3:  #Controllo degli argomenti
         print('Errore')
     else:
-        if argv[1] == '-n':             # Se l'argomento Ë -n
+        if argv[1] == '-n':             # Se l'argomento √® -n
             enabledNetworkAdapter(f)     # Avvia la funzione 'Schede abilitate'
-        elif argv[1] == '-y':           # Se l'arogmento Ë -y
+        elif argv[1] == '-y':           # Se l'arogmento √® -y
             allNetworkAdapter(f)         # Avvia la funzione 'Tutte le schede'
-        else:                           # Se l'argomento Ë sbagliato
+        else:                           # Se l'argomento √® sbagliato
             print('Errore, argomento non valido')    # Stampa 'Errore'
 
 def enabledNetworkAdapter(f):
@@ -45,7 +44,7 @@ def enabledNetworkAdapter(f):
     f.write('Nome macchina: ' + hostname + '  ' + st)
     
     for i in objWMIService.query(colItems):
-        #Controllo se la scheda di rete Ë attiva
+        #Controllo se la scheda di rete √® attiva
         if i.IPEnabled == True:
             #Nome scheda di rete
             f.write('\n' + str(i.Index) + ') ' + i.Description)
