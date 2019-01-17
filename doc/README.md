@@ -1,2 +1,5 @@
-# getnetinfo
+Getnetinfo.py
+=============
+
+
 
